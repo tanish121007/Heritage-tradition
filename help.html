@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heritage Sites in India</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <!-- Your custom JS -->
+    <script>
+        // Initialize the map
+        const map = L.map('map').setView([20.5937, 78.9629], 5); // Centered on India
+        
+        // Add a tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        
+        // Example data for heritage sites
+        const heritageSites = [
+            { name: 'Taj Mahal', lat: 27.1751, lng: 78.0421 },
+            { name: 'Qutub Minar', lat: 28.5244, lng: 77.1855 },
+            { name: 'Red Fort', lat: 28.6562, lng: 77.2410 },
+            { name: 'Gateway of India', lat: 18.9215, lng: 72.8347 },
+            // You can add more sites here
+        ];
+        
+        // Add markers for each heritage site
+        heritageSites.forEach(site => {
+            L.marker([site.lat, site.lng])
+                .addTo(map)
+                .bindPopup(`<b>${site.name}</b>`);
+        });
+    </script>
+</body>
+</html>

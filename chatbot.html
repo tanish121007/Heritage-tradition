@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calendar with Coordinated Dates and Days</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .calendar {
+            width: 350px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .month {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+        }
+
+        .month .prev, .month .next {
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .date h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .weekdays, .days {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .weekdays div, .days div {
+            width: 14.28%; /* 7 days in a week */
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .days div {
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .days div:hover {
+            background-color: #e0e0e0;
+        }
+
+        .days .today {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
+        .days .festival {
+            background-color: #ffcc00;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .days .festival::after {
+            content: attr(data-festival);
+            font-size: 12px;
+            color: #000;
+            position: absolute;
+            top: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="calendar">
+        <div class="month">
+            <div class="prev" onclick="moveDate('prev')">&#10094;</div>
+            <div class="date">
+                <h1 id="month"></h1>
+                <p id="date_str"></p>
+            </div>
+            <div class="next" onclick="moveDate('next')">&#10095;</div>
+        </div>
+        <div class="weekdays">
+            <div>Sun</div>
+            <div>Mon</div>
+            <div>Tue</div>
+            <div>Wed</div>
+            <div>Thu</div>
+            <div>Fri</div>
+            <div>Sat</div>
+        </div>
+        <div class="days" id="days"></div>
+    </div>
+
+    <script>
+        const date = new Date();
+
+        // List of festivals with their dates
+        const festivals = {
+            '2024-11-12': 'Diwali',
+            '2024-10-20': 'Navaratri',
+            '2024-12-25': 'Christmas'
+            // Add more festivals here
+        };
+
+        const renderCalendar = () => {
+            date.setDate(1); // Set the date to the first day of the month
+
+            const monthDays = document.querySelector("#days");
+
+            const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate(); // Last day of the month
+
+            const prevLastDay = new Date(date.getFullYear(), date.getMonth(), 0).getDate(); // Last day of the previous month
+
+            const firstDayIndex = date.getDay(); // Index of the first day of the month (0 for Sunday, 1 for Monday, etc.)
+
+            const lastDayIndex = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDay(); // Index of the last day of the month
+
+            const nextDays = 7 - lastDayIndex - 1; // Days to display from the next month
+
+            const months = [
+                "January",
+                "February",
+                "March",
+                "April",
+                "May",
+                "June",
+                "July",
+                "August",
+                "September",
+                "October",
+                "November",
+                "December",
+            ];
+
+            document.querySelector("#month").innerHTML = months[date.getMonth()]; // Display month name
+            document.querySelector("#date_str").innerHTML = date.toDateString();  // Display full date
+
+            let days = "";
+
+            // Display the last few days of the previous month
+            for (let x = firstDayIndex; x > 0; x--) {
+                days += `<div class="prev-date">${prevLastDay - x + 1}</div>`;
+            }
+
+            // Display all days of the current month
+            for (let i = 1; i <= lastDay; i++) {
+                const fullDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                if (festivals[fullDate]) {
+                    days += `<div class="festival" data-festival="${festivals[fullDate]}">${i}</div>`;
+                } else if (
+                    i === new Date().getDate() &&
+                    date.getMonth() === new Date().getMonth() &&
+                    date.getFullYear() === new Date().getFullYear()
+                ) {
+                    days += `<div class="today">${i}</div>`;
+                } else {
+                    days += `<div>${i}</div>`;
+                }
+            }
+
+            // Display the first few days of the next month
+            for (let j = 1; j <= nextDays; j++) {
+                days += `<div class="next-date">${j}</div>`;
+            }
+
+            monthDays.innerHTML = days;
+        };
+
+        const moveDate = (param) => {
+            if (param === "prev") {
+                date.setMonth(date.getMonth() - 1); // Move to previous month
+            } else if (param === "next") {
+                date.setMonth(date.getMonth() + 1); // Move to next month
+            }
+            renderCalendar(); // Rerender the calendar after date change
+        };
+
+        renderCalendar();
+    </script>
+</body>
+</html>
